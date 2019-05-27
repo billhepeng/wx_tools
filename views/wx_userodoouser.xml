@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="wx_user_odoouser_view_tree" model="ir.ui.view">
+            <field name="name">wx.user.odoouser.view_tree</field>
+            <field name="model">wx.user.odoouser</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="微信关联用户列表">
+                    <field name="id"/>
+                    <field name="open_id"/>
+                    <field name="user_id"/>
+                    <field name="DeviceId"/>
+                    <field name="codetype"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="wx_user_odoouser_view_form" model="ir.ui.view">
+            <field name="name">wx.user.odoouser.view_form</field>
+            <field name="model">wx.user.odoouser</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="微信关联用户">
+                    <header>
+                        <button name="send_text_confirm" string="发送微信消息" type="object"
+                                attrs="{'invisible': [('id', '=', False)]}"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="id" invisible="1"/>
+                            <field name="open_id"/>
+                            <field name="user_id"/>
+
+                            <field name="DeviceId"/>
+                            <field name="codetype"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="wx_user_odoouser_filter" model="ir.ui.view">
+            <field name="name">wx.user.odoouser.select</field>
+            <field name="model">wx.user.odoouser</field>
+            <field name="arch" type="xml">
+                <search string="微信用户查找">
+
+                    <filter help="企业微信" icon="terp-personal+"
+                            domain="[('codetype','=','corp')]"/>
+                    <filter help="微信公众号" icon="terp-personal+"
+                            domain="[('codetype','=','wx')]"/>
+
+
+                </search>
+            </field>
+        </record>
+
+
+        <record id="wx_user_odoouser_action" model="ir.actions.act_window">
+            <field name="name">公众号用户</field>
+            <field name="res_model">wx.user.odoouser</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+        </record>
+
+        <menuitem action="wx_user_odoouser_action" id="wx_user_odoouser_menuitem" name="微信关联用户" parent="parent_menu_120"
+                  sequence="11"/>
+
+
+    </data>
+</odoo>

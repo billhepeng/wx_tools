@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="res_partner_form_inherit_001" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit_wx01</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="before">
+                        <header>
+		                        <button string="发送企文本消息" type="object" name="send_partner_corp_text"/>
+                                <button string="发送公众号文本消息"   type="object" name="send_partner_wx_text"/>
+
+                                <button string="发送企业卡片消息" type="object" name="send_partner_corp_card"/>
+                                <button string="发送公众号模板消息"   type="object" name="send_partner_wx_template"/>
+	                    </header>
+
+                    </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
