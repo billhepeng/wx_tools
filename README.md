@@ -8,7 +8,7 @@ Odoo 接入企业微信，接入微信公众号
 **接口调用说明**
 ====================
     1：发送企业号文本卡片消息 
-    方法签名:
+    方法签名: 模型:wx.corpuser
     def send_text_card(self, title, description, url, partner=None, user=None, partner_id=None, user_id=None):
         title : 发送标题   如:订单提醒
         description: 卡片信息描述 如下格式:
@@ -25,7 +25,7 @@ Odoo 接入企业微信，接入微信公众号
         user_id：用户ID，根据用户ID查找用户 1：找到用户的微信关联账号发送，2：如果没找到1，找到供应商关联的合作伙伴的微信发
     
     2：发送企业号文本消息
-     方法签名
+     方法签名 模型:wx.corpuser
      def send_message(self, partner=None, msg='', user=None, partner_id=None, user_id=None):
          partner: 供应商对象，如果传入供应商换到供应商对象的openid发送
          msg: 消息文本
@@ -34,7 +34,7 @@ Odoo 接入企业微信，接入微信公众号
          user_id：用户ID，根据用户ID查找用户 1：找到用户的微信关联账号发送，2：如果没找到1，找到供应商关联的合作伙伴的微信发送   
    
     3 发送微信公众号文本消息
-    方法签名
+    方法签名 模型:wx.user
     def send_message(self, partner=None, msg='', user=None, partner_id=None, user_id=None):
       partner: 供应商对象，如果传入供应商换到供应商对象的openid发送
       msg: 消息文本
@@ -42,7 +42,7 @@ Odoo 接入企业微信，接入微信公众号
       partner_id：供应商ID 根据ID找到供应商的微信
       user_id：用户ID，根据用户ID查找用户 1：找到用户的微信关联账号发送，2：如果没找到1，找到供应商关联的合作伙伴的微信发送
     4 发送微信公众号模板信息
-    方法签名
+    方法签名 模型:wx.user
      def send_template_message(self, template_id, data, url='', partner=None,user=None, partner_id=None, user_id=None):
         # template_id :模板ID，可以在公众号模板中查询   如:nVJP4GzyfDtHp1pssoW1hq8ajY975xi8qFGoOdaEVbw
         # data:模板数据Jsono类型  如下格式:
