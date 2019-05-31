@@ -37,9 +37,10 @@
         'views/wx_user_views.xml',
         'views/wx_userodoouser.xml',
         'views/wx_para_config.xml',
+
+        'views/wx_tools_templates.xml'
     ],
-    'qweb': [
-    ],
+    'qweb': ['static/src/xml/wx_tools.xml'],
     'depends': ['web', 'im_livechat', 'purchase'],
     'installable': True,
     'active': False,

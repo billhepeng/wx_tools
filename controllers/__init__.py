@@ -17,3 +17,5 @@ from . import wx_account_invoice
 from . import wx_code
 
 from . import wx_purchase
+
+from . import wx_tools

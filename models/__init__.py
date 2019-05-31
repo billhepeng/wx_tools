@@ -3,6 +3,7 @@ from . import livechat_channel
 from . import reply_about_models
 from . import menu_about_models
 from . import wx_user
+from . import res_users
 from . import wx_corpuser
 from . import wx_autoreply_model
 from . import wx_config_model

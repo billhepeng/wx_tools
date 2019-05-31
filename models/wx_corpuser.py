@@ -149,20 +149,70 @@ class wx_corpuser(models.Model):
     def send_messagebyopenid(self, openid, msg):
         corp_client.send_message(self, openid, msg)
 
+    # ------------------------------------------------------
+    # 发送企业号文本消息
+    # partner: 供应商对象，如果传入供应商换到供应商对象的openid发送
+    # msg: 消息文本
+    # user：用户对象 如果传入用户1：找到用户的微信关联账号发送，2：如果没找到1，找到供应商关联的合作伙伴的微信发送
+    # partner_id：供应商ID 根据ID找到供应商的微信
+    # user_id：用户ID，根据用户ID查找用户 1：找到用户的微信关联账号发送，2：如果没找到1，找到供应商关联的合作伙伴的微信发送
+    # ------------------------------------------------------
     @api.multi
-    def send_messagebypartner(self, partner=None, msg=''):
+    def send_message(self, partner=None, msg='', user=None, partner_id=None, user_id=None):
         if partner:
             if partner.wxcorp_user_id.userid:
                 corp_client.send_message(self, partner.wxcorp_user_id.userid, msg)
             else:
-                raise UserError(u'发送失败,客户没有绑定企业微信')
+                raise UserError(u'发送失败,客户没有绑定微信')
+        if user:
+            if user.wxcorp_user_id.userid:
+                corp_client.send_message(self, user.wxcorp_user_id.userid, msg)
+            elif user.partner_id.wxcorp_user_id.userid:
+                corp_client.send_message(self, user.partner_id.wxcorp_user_id.userid, msg)
+            else:
+                raise UserError(u'发送失败,客户没有绑定微信')
+        if partner_id:
+            partner_ = self.env['res.partner'].sudo().browse(partner_id)
+            self.send_message(partner=partner_, msg=msg)
+        if user_id:
+            user_ = self.env['res.users'].sudo().browse(user_id)
+            self.send_message(user=user_, msg=msg)
 
-    def send_text_card(self, title, description, url,partner=None):
+    # ------------------------------------------------------
+    # 发送企业号文本卡片消息
+    # title : 发送标题   如:订单提醒
+    # description: 卡片信息描述 如下格式:
+    # 格式： https://work.weixin.qq.com/api/doc#90000/90135/90236/文本卡片消息
+    # 请求示例：
+    #      <div class="gray">收到新信息:收到信息请回复，谢谢。</div>
+    #      <div class="normal">订单号:SO024</div>
+    #      <div class="highlight">时间:2019-05-27 11:21:32 \n联系:Administrator</div>
+    # url:信息接到的URL http://weixintools.pub.heyanze.com/web/login?usercode=saleorder&codetype=crop&redirect=/my/orders/24
+    #     URL解析： usercode:访问URL类型用户于定义是那个业务单元  codetype:(wx=微信公众号 crop=企业号)  redirect:转向内部URL
+    # partner: 供应商对象，如果传入供应商换到供应商对象的openid发送
+    # user：用户对象 如果传入用户1：找到用户的微信关联账号发送，2：如果没找到1，找到供应商关联的合作伙伴的微信发送
+    # partner_id：供应商ID 根据ID找到供应商的微信
+    # user_id：用户ID，根据用户ID查找用户 1：找到用户的微信关联账号发送，2：如果没找到1，找到供应商关联的合作伙伴的微信发送
+    # ------------------------------------------------------
+    def send_text_card(self, title, description, url, partner=None, user=None, partner_id=None, user_id=None):
         if partner:
             if partner.wxcorp_user_id.userid:
                 corp_client.send_text_card(self, partner.wxcorp_user_id.userid, title, description, url)
             else:
-                raise UserError(u'发送失败,客户没有绑定企业微信')
+                raise UserError(u'发送失败,客户没有绑定微信')
+        if user:
+            if user.wxcorp_user_id.userid:
+                corp_client.send_text_card(self, user.wxcorp_user_id.userid, title, description, url)
+            elif user.partner_id.wxcorp_user_id.userid:
+                corp_client.send_text_card(self, user.partner_id.wxcorp_user_id.userid, title, description, url)
+            else:
+                raise UserError(u'发送失败,客户没有绑定微信')
+        if partner_id:
+            partner_ = self.env['res.partner'].sudo().browse(partner_id)
+            self.send_text_card(title, description, url, partner=partner_)
+        if user_id:
+            user_ = self.env['res.users'].sudo().browse(user_id)
+            self.send_text_card(title, description, url, user=user_)
 
     @api.multi
     def send_text_confirm(self):

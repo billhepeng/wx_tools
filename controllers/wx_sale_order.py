@@ -22,6 +22,7 @@ class WXSaleOrder(models.AbstractModel):
             description = "<div class=\"gray\">" + date_ref + "</div> <div class=\"normal\">" + data_body + "</div>" \
                           "<div class=\"highlight\">" + \
                           "时间:" + order.date_order + \
+                          "\n产品:" + '：'.join(order.order_line.mapped('product_id.display_name')) + \
                           "\n联系:"+order.create_uid.name+"("+order.create_uid.email+")</div>"
             if self.partner_id.wxcorp_user_id.userid:
                 url = corp_client.corpenv(self.env).server_url+'/web/login?usercode=saleorder&codetype=corp&redirect=' + order.portal_url
@@ -42,12 +43,15 @@ class WXSaleOrder(models.AbstractModel):
                         "color": "#173177"
                     },
                     "remark": {
-                        "value": "产品:" + order.product_id.display_name+"\n联系:" + order.create_uid.name + "(" + order.create_uid.email + ")"
+                        "value":  "产品："+'：'.join(order.order_line.mapped('product_id.display_name')) +
+                                  "\n联系:" + order.create_uid.name
                     }
                 }
-
-                template_id = 'XMhanX-l5O0OaLCLbyzqT8YBuZkMEoi8WMDnmVQkqTA'
-                url = client.wxenv(self.env).server_url+'/web/login?usercode=saleorder&codetype=wx&redirect=' + order.portal_url
+                template_id = ''
+                configer_para = self.env["wx.paraconfig"].sudo().search([('paraconfig_name', '=', '订单确认通知')])
+                if configer_para:
+                    template_id = configer_para[0].paraconfig_value
+                url = client.wxenv(self.env).server_url+'/web/login?usercode=saleorderwx&codetype=wx&redirect=' + order.portal_url
                 client.send_template_message(self, self.partner_id.wx_opendid.openid, template_id, data, url,
                                              'saleorder')
             logging.info(order)
@@ -73,7 +77,8 @@ class WXSaleOrder(models.AbstractModel):
             data_body = "订单号:" + order.name
             description = "<div class=\"gray\">" + date_ref + "</div> <div class=\"normal\">" + data_body + "</div>" \
                           "<div class=\"highlight\"> 时间:" + order.date_order + \
-                          "\n联系:" + order.create_uid.name + "(" + order.create_uid.email + ")</div>"
+                          "\n产品:" + '：'.join(order.order_line.mapped('product_id.display_name')) + \
+                          "\n联系:" + order.create_uid.name + "</div>"
             if order.create_uid.wxcorp_user_id.userid:
                 url = corp_client.corpenv(self.env).server_url+'/web/login?usercode=saleorder&codetype=corp&redirect=' + redirectur
                 url = corp_client.authorize_url(self, url, 'saleorderinvoice')
@@ -100,11 +105,15 @@ class WXSaleOrder(models.AbstractModel):
                         "value": order.date_order
                     },
                     "remark": {
-                        "value": "产品:" + order.product_id.display_name+"\n联系:" + order.create_uid.name + "(" + order.create_uid.email + ")"
+                        "value":  "产品："+'：'.join(order.order_line.mapped('product_id.display_name')) +
+                                  "\n联系:" + order.create_uid.name
                     }
                 }
-                template_id = 'xdZchgSs4JoTpu8vOl8VW-7aBF8N3zwTCe8xOtWqsIQ'
-                url = client.wxenv(self.env).server_url+'/web/login?usercode=saleorder&codetype=wx&redirect=' + redirectur
+                template_id = ''
+                configer_para = self.env["wx.paraconfig"].sudo().search([('paraconfig_name', '=', '发票状态通知')])
+                if configer_para:
+                    template_id = configer_para[0].paraconfig_value
+                url = client.wxenv(self.env).server_url+'/web/login?usercode=saleorderwx&codetype=wx&redirect=' + redirectur
                 client.send_template_message(self, self.partner_id.wx_opendid.openid, template_id, data, url,
                                              'saleorder')
             logging.info("order")

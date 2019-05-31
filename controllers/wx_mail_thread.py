@@ -67,7 +67,7 @@ class WXMailThread(models.AbstractModel):
                               "\n联系:" + message.author_id.name + "</div>"
                 if to_wxid.wxcorp_user_id.userid:
                     url = corp_client.corpenv(
-                        self.env).server_url + '/web/login?usercode=saleorder&codetype=corp&redirect=' + order.portal_url
+                        self.env).server_url + '/web/login?usercode=saleordermessage&codetype=corp&redirect=' + order.portal_url
                     url = corp_client.authorize_url(self, url, 'saleorder')
                     corp_client.send_text_card(self, to_wxid.wxcorp_user_id.userid, title, description, url, "详情")
                 if to_wxid.wx_opendid.openid:
@@ -86,14 +86,17 @@ class WXMailThread(models.AbstractModel):
                            # "color": "#173177"
                         },
                         "remark": {
-                            "value": "产品:" + order.product_id.display_name
+                            "value":  "产品："+'：'.join(order.order_line.mapped('product_id.display_name'))
                         }
                     }
 
-                    template_id = 'nVJP4GzyfDtHp1pssoW1hq8ajY975xi8qFGoOdaEVbw'
+                    template_id = ''
+                    configer_para = self.env["wx.paraconfig"].sudo().search([('paraconfig_name', '=', '订单提醒')])
+                    if configer_para:
+                        template_id = configer_para[0].paraconfig_value
                     from ..controllers import client
                     url = client.wxenv(
-                        self.env).server_url + '/web/login?usercode=saleorder&codetype=wx&redirect=' + order.portal_url
+                        self.env).server_url + '/web/login?usercode=saleorderwxmessage&codetype=wx&redirect=' + order.portal_url
                     client.send_template_message(self, to_wxid.wx_opendid.openid, template_id, data, url,
                                                  'saleorder')
         if message.model == 'purchase.order' and body:
@@ -116,7 +119,7 @@ class WXMailThread(models.AbstractModel):
                               "\n联系:" + message.author_id.name + "</div>"
                 if order.partner_id.wxcorp_user_id.userid:
                     url = corp_client.corpenv(
-                        self.env).server_url + '/web/login?usercode=purchaseorder&codetype=corp&redirect=' + order.website_url
+                        self.env).server_url + '/web/login?usercode=purchaseordermessage&codetype=corp&redirect=' + order.website_url
                     url = corp_client.authorize_url(self, url, 'saleorder')
                     corp_client.send_text_card(self, self.partner_id.wxcorp_user_id.userid, title, description,
                                                url, "详情")
@@ -135,14 +138,16 @@ class WXMailThread(models.AbstractModel):
                             "value": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                         },
                         "remark": {
-                            "value": "产品:" + order.product_id.display_name
+                            "value":  "产品："+'：'.join(order.order_line.mapped('product_id.display_name'))
                         }
                     }
-
-                    template_id = 'nVJP4GzyfDtHp1pssoW1hq8ajY975xi8qFGoOdaEVbw'
+                    template_id = ''
+                    configer_para = self.env["wx.paraconfig"].sudo().search([('paraconfig_name', '=', '订单提醒')])
+                    if configer_para:
+                        template_id = configer_para[0].paraconfig_value
                     from ..controllers import client
                     url = client.wxenv(
-                        self.env).server_url + '/web/login?usercode=purchaseorder&codetype=wx&redirect=' + order.website_url
+                        self.env).server_url + '/web/login?usercode=purchaseorderwxmessage&codetype=wx&redirect=' + order.website_url
                     client.send_template_message(self, self.partner_id.wx_opendid.openid, template_id, data,
                                                  url,
                                                  'saleorder')

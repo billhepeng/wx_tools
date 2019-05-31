@@ -5,7 +5,8 @@ from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
-class res_partner(models.Model):
+
+class WXResPartner(models.Model):
     _inherit = 'res.partner'
 
     wxcorp_user_id = fields.Many2one('wx.corpuser', '关联企业号用户')
@@ -16,7 +17,7 @@ class res_partner(models.Model):
             "mtype": "text",
             "content": text,
         }
-        self.env['wx.corpuser'].send_messagebypartner(partner=self, msg=text)
+        self.env['wx.corpuser'].send_message(partner=self, msg=text)
 
     @api.multi
     def send_partner_corp_text(self):
@@ -43,7 +44,7 @@ class res_partner(models.Model):
             "mtype": "text",
             "content": data,
         }
-        #self.env['wx.corpuser'].send_messagebypartner(partner=self, msg=text)
+        # self.env['wx.corpuser'].send_message(partner=self, msg=text)
 
     @api.multi
     def send_partner_wx_template(self):
@@ -64,13 +65,15 @@ class res_partner(models.Model):
             'target': 'new'
         }
 
-
     def send_wx_text(self, text):
         msg = {
             "mtype": "text",
             "content": text,
         }
-        self.env['wx.user'].send_messagebypartner(partner=self, msg=text)
+        #user = self.env['res.users'].sudo().browse(6)
+        #user =  objs = self.env['wx.user.group'].search([])
+        self.env['wx.user'].send_message(partner=self, msg=text)
+        #self.env['wx.user'].send_message(partner=self, msg=text, user_id=6)
 
     @api.multi
     def send_partner_wx_text(self):
@@ -116,5 +119,3 @@ class res_partner(models.Model):
             'view_id': self.env.ref('wx_tools.wx_partner_wx_chat').id,
             'target': 'new'
         }
-
-

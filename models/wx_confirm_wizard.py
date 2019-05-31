@@ -73,5 +73,5 @@ class WxConfirm(models.TransientModel):
                 "color": "#173177"
             }
         }
-        self.env['wx.user'].send_partnertemplate_message(self.template_id, json.loads(self.data), self.url, partner=rs)
+        self.env['wx.user'].send_template_message(self.template_id, json.loads(self.data), self.url, partner=rs)
         return ret

@@ -23,7 +23,8 @@ class WXPurchase(models.AbstractModel):
             description = "<div class=\"gray\">" + date_ref + "</div> <div class=\"normal\">" + data_body + "</div>" \
                           "<div class=\"highlight\">" + \
                           "时间:" + order.date_order + \
-                          "\n联系:" + order.create_uid.name + "(" + order.create_uid.email + ")</div>"
+                          "\n产品:"+'：'.join(order.order_line.mapped('product_id.display_name')) + \
+                          "\n联系:" + order.create_uid.name + "</div>"
             if order.partner_id.wxcorp_user_id.userid:
                 url = corp_client.corpenv(
                     self.env).server_url + '/web/login?usercode=purchaseorder&codetype=corp&redirect=' + order.website_url
@@ -44,13 +45,16 @@ class WXPurchase(models.AbstractModel):
                         "value": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     },
                     "remark": {
-                        "value": "产品:" + order.product_id.display_name +
+                        "value": "产品："+'：'.join(order.order_line.mapped('product_id.display_name')) +
                                  "\n联系:" + order.create_uid.name,
                     }
                 }
-                template_id = 'nVJP4GzyfDtHp1pssoW1hq8ajY975xi8qFGoOdaEVbw'
+                template_id = ''
+                configer_para = self.env["wx.paraconfig"].sudo().search([('paraconfig_name', '=', '订单提醒')])
+                if configer_para:
+                    template_id = configer_para[0].paraconfig_value
                 url = client.wxenv(
-                    self.env).server_url + '/web/login?usercode=saleorder&codetype=wx&redirect=' + order.website_url
+                    self.env).server_url + '/web/login?usercode=purchaseorderwx&codetype=wx&redirect=' + order.website_url
                 client.send_template_message(self, self.partner_id.wx_opendid.openid, template_id, data, url,
                                              'saleorder')
         return res

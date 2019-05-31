@@ -1,0 +1,20 @@
+<template id="try_trial">
+    <t t-call="website.layout">
+        <t t-set="title">Try trial</t>
+        <div class="oe_structure">
+            <div class="container" style="text-align: center">
+                <h2>开通:
+                    <t t-esc="plan.name"/>
+                </h2>
+                <p>实例正在创建中...</p>
+                <p>这可能需要几分钟，请稍后在 <a href="/my/home">我的账号</a> 页面 SaaS 栏查看创建的结果
+                </p>
+            </div>
+        </div>
+    </t>
+    <script>
+        $(document).ready(function() {
+        $('div.oe_structure div.container').css('height', $(window).innerHeight());
+        });
+    </script>
+</template>
